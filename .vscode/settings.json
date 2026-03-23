@@ -1,0 +1,7 @@
+{
+  "python.analysis.extraPaths": [
+    "./url_phishing/src",
+    "./email_spam/src",
+    "./upi_module/src"
+  ]
+}
