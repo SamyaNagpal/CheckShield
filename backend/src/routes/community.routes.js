@@ -18,6 +18,36 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
+// Health check for Gemini API
+router.get('/api/community/health/gemini', async (req, res) => {
+  try {
+    const geminiService = require('../services/gemini.service');
+    const validation = geminiService.validateApiKey();
+    
+    if (!validation.valid) {
+      return res.status(400).json({
+        status: 'error',
+        message: `API key validation failed: ${validation.error}`,
+        apiKeySet: !!process.env.GEMINI_API_KEY,
+        apiKeyLength: process.env.GEMINI_API_KEY?.length || 0
+      });
+    }
+
+    res.json({
+      status: 'ok',
+      message: 'Gemini API key is configured correctly',
+      apiKeySet: true,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Get all community posts (paginated)
 router.get('/api/community/posts', async (req, res) => {
   try {
@@ -202,6 +232,80 @@ router.delete('/api/community/posts/:postId', async (req, res) => {
     res.json({ message: 'Post deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting post', error: error.message });
+  }
+});
+
+// AI: Improve text (description or title)
+router.post('/api/community/improve-text', async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ message: 'Text is required' });
+    }
+
+    const geminiService = require('../services/gemini.service');
+    const improvedText = await geminiService.improveText(text);
+
+    res.json({
+      original: text,
+      improved: improvedText,
+      message: 'Text improved successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error improving text', 
+      error: error.message 
+    });
+  }
+});
+
+// AI: Improve entire post (title + description)
+router.post('/api/community/improve-post', async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    if (!title || !description) {
+      return res.status(400).json({ message: 'Title and description are required' });
+    }
+
+    const geminiService = require('../services/gemini.service');
+    const improved = await geminiService.improvePost(title, description);
+
+    res.json({
+      original: { title, description },
+      improved: improved,
+      message: 'Post improved successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error improving post', 
+      error: error.message 
+    });
+  }
+});
+
+// AI: Generate security tips from post content
+router.post('/api/community/generate-tips', async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ message: 'Text is required' });
+    }
+
+    const geminiService = require('../services/gemini.service');
+    const tips = await geminiService.generateSecurityTips(text);
+
+    res.json({
+      tips: tips,
+      message: 'Security tips generated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error generating tips', 
+      error: error.message 
+    });
   }
 });
 

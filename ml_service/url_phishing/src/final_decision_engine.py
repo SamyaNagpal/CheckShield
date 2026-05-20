@@ -19,17 +19,46 @@ model = joblib.load(MODEL_PATH)
 feature_columns = joblib.load(FEATURE_PATH)
 
 
+# ================= TRUSTED DOMAINS =================
+
+TRUSTED_DOMAINS = [
+    "google.com", "google.co.in", "youtube.com",
+    "amazon.com", "amazon.in",
+    "microsoft.com", "outlook.com", "live.com",
+    "apple.com", "icloud.com",
+    "paypal.com",
+    "github.com", "gitlab.com",
+    "linkedin.com",
+    "twitter.com", "x.com",
+    "instagram.com", "facebook.com", "meta.com",
+    "netflix.com",
+    "flipkart.com", "myntra.com",
+    "hdfc.com", "hdfcbank.com",
+    "sbi.co.in", "onlinesbi.com",
+    "icicibank.com", "axisbank.com",
+    "paytm.com", "phonepe.com",
+    "irctc.co.in",
+    "incometax.gov.in", "uidai.gov.in"
+]
+
+
+def is_trusted(url):
+    try:
+        parsed = urlparse(url)
+        domain = parsed.netloc.lower().replace('www.', '')
+        return any(domain == t or domain.endswith('.' + t) for t in TRUSTED_DOMAINS)
+    except:
+        return False
+
+
 # ================= PREPROCESSING =================
 
 def normalize_url(url):
     if not isinstance(url, str):
         return None
-
     url = url.strip().lower()
-
     if not url.startswith(("http://", "https://")):
         url = "http://" + url
-
     return url
 
 
@@ -100,9 +129,8 @@ def extract_features(url, has_encoded):
 
     # -------- Keyword features --------
     keyword_count = sum(1 for word in SUSPICIOUS_KEYWORDS if word in url)
-
     features['suspicious_keyword_count'] = keyword_count
-    features['keyword_density'] = keyword_count / max(len(url),1)
+    features['keyword_density'] = keyword_count / max(len(url), 1)
 
     # -------- Suspicious TLD --------
     features['suspicious_tld'] = int(ext.suffix in SUSPICIOUS_TLDS)
@@ -112,7 +140,6 @@ def extract_features(url, has_encoded):
 
     # -------- Domain complexity --------
     domain_words = ext.domain.split("-")
-
     features['domain_word_count'] = len(domain_words)
     features['domain_length'] = len(ext.domain)
 
@@ -137,6 +164,18 @@ def analyze_url(input_url):
     encoded_flag = has_encoded_chars(normalized)
     decoded = decode_url(normalized)
 
+    # -------- TRUSTED DOMAIN EARLY EXIT --------
+    if is_trusted(decoded):
+        return {
+            "url": input_url,
+            "risk_score": 0,
+            "risk_level": "LOW RISK",
+            "ml_probability": 0,
+            "rule_risk": 0,
+            "blacklist_flag": False,
+            "reasons": ["Trusted domain verified"]
+        }
+
     features = extract_features(decoded, encoded_flag)
 
     X_test = pd.DataFrame([features])
@@ -144,32 +183,25 @@ def analyze_url(input_url):
 
     # -------- ML prediction --------
     proba = model.predict_proba(X_test)[0]
-
     classes = model.classes_
-
-# find phishing index dynamically
     phishing_index = list(classes).index(1)
-
-    ml_probability = proba[phishing_index] * 100 
+    ml_probability = proba[phishing_index] * 100
 
     # -------- Rule engine --------
     rule_risk, reasons = rule_based_risk(features, decoded)
 
-    # -------- Fusion --------
-    # -------- Fusion Strategy (Rule Override) --------
-
+    # -------- Fusion Strategy --------
     if rule_risk >= 70:
-     final_risk = rule_risk
+        final_risk = rule_risk
     elif rule_risk >= 40:
-     final_risk = max(rule_risk, ml_probability)
+        final_risk = max(rule_risk, ml_probability)
     else:
-     final_risk = (ml_probability * 0.7) + (rule_risk * 0.3)
+        final_risk = (ml_probability * 0.7) + (rule_risk * 0.3)
 
     final_risk = min(100, final_risk)
 
     # -------- VirusTotal --------
     vt_result = check_virustotal(decoded)
-
     blacklist_flag = False
 
     if vt_result is True:

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckShield URL Scanner</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CheckShield</h1>
+            <p class="subtitle">URL Security Scanner</p>
+        </div>
+
+        <!-- URL Input Section -->
+        <div class="input-section">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="urlInput" 
+                    placeholder="Enter URL to scan or scan current page"
+                    class="url-input"
+                >
+                <button id="scanBtn" class="scan-btn">Scan</button>
+            </div>
+            <button id="currentPageBtn" class="current-page-btn">Scan Current Page</button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Analyzing URL...</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="results hidden">
+            <div id="resultCard" class="result-card"></div>
+        </div>
+
+        <!-- History Section -->
+        <div class="history-section">
+            <h3>Recent Scans</h3>
+            <div id="history" class="history-list"></div>
+            <button id="clearHistoryBtn" class="clear-btn">Clear History</button>
+        </div>
+
+        <!-- Settings -->
+        <div class="settings-section">
+            <button id="settingsBtn" class="settings-btn">⚙️ Settings</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Settings</h2>
+            <div class="settings-form">
+                <div class="setting-group">
+                    <label for="apiUrl">Backend API URL:</label>
+                    <input type="text" id="apiUrl" placeholder="http://localhost:8000">
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="autoScan">
+                        Auto-scan on page load
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="notifications">
+                        Show notifications
+                    </label>
+                </div>
+                <button id="saveSettings" class="save-btn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

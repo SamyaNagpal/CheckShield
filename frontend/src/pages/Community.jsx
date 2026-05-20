@@ -125,6 +125,9 @@ function Community({ user }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [expandedPostId, setExpandedPostId] = useState(null);
   const [replyContent, setReplyContent] = useState({});
+  const [improvementSuggestion, setImprovementSuggestion] = useState(null);
+  const [improvingField, setImprovingField] = useState(null);
+  const [isImproving, setIsImproving] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -241,6 +244,47 @@ function Community({ user }) {
     }
   };
 
+  const handleImproveText = async (field) => {
+    const text = field === 'title' ? formData.title : formData.description;
+    
+    if (!text.trim()) {
+      alert('Please enter some text first');
+      return;
+    }
+
+    setIsImproving(true);
+    setImprovingField(field);
+
+    try {
+      const response = await api.post('/api/community/improve-text', { text });
+      setImprovementSuggestion({
+        field,
+        original: text,
+        improved: response.data.improved
+      });
+    } catch (error) {
+      console.error('Error improving text:', error);
+      alert('Failed to improve text. Please check if Gemini API is configured.');
+    } finally {
+      setIsImproving(false);
+    }
+  };
+
+  const handleAcceptImprovement = () => {
+    if (!improvementSuggestion) return;
+
+    const { field, improved } = improvementSuggestion;
+    setFormData({
+      ...formData,
+      [field]: improved
+    });
+    setImprovementSuggestion(null);
+  };
+
+  const handleRejectImprovement = () => {
+    setImprovementSuggestion(null);
+  };
+
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'high':
@@ -306,7 +350,17 @@ function Community({ user }) {
           <h2>Report a New Scam</h2>
           <form onSubmit={handleCreatePost}>
             <div className="form-group">
-              <label htmlFor="title">Title *</label>
+              <div className="form-label-row">
+                <label htmlFor="title">Title *</label>
+                <button 
+                  type="button"
+                  className="btn-improve-ai"
+                  onClick={() => handleImproveText('title')}
+                  disabled={isImproving}
+                >
+                  {isImproving && improvingField === 'title' ? '✨ Improving...' : '✨ Improve with AI'}
+                </button>
+              </div>
               <input
                 type="text"
                 id="title"
@@ -348,7 +402,17 @@ function Community({ user }) {
             </div>
 
             <div className="form-group">
-              <label htmlFor="description">Description *</label>
+              <div className="form-label-row">
+                <label htmlFor="description">Description *</label>
+                <button 
+                  type="button"
+                  className="btn-improve-ai"
+                  onClick={() => handleImproveText('description')}
+                  disabled={isImproving}
+                >
+                  {isImproving && improvingField === 'description' ? '✨ Improving...' : '✨ Improve with AI'}
+                </button>
+              </div>
               <textarea
                 id="description"
                 placeholder="Provide detailed information about the scam, what it targeted, and any indicators you noticed..."
@@ -464,6 +528,52 @@ function Community({ user }) {
           ))
         )}
       </div>
+
+      {/* AI Improvement Suggestion Modal */}
+      {improvementSuggestion && (
+        <div className="modal-overlay">
+          <div className="improvement-modal">
+            <div className="modal-header">
+              <h3>✨ AI Improvement Suggestion</h3>
+              <button 
+                className="close-btn"
+                onClick={handleRejectImprovement}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="modal-content">
+              <div className="comparison">
+                <div className="original">
+                  <h4>Original {improvementSuggestion.field}:</h4>
+                  <p>{improvementSuggestion.original}</p>
+                </div>
+
+                <div className="improved">
+                  <h4>Improved {improvementSuggestion.field}:</h4>
+                  <p>{improvementSuggestion.improved}</p>
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button 
+                  className="btn-accept"
+                  onClick={handleAcceptImprovement}
+                >
+                  ✓ Accept & Update
+                </button>
+                <button 
+                  className="btn-reject"
+                  onClick={handleRejectImprovement}
+                >
+                  ✕ Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
