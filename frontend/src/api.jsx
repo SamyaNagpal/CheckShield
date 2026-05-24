@@ -85,4 +85,43 @@ export async function scanQR(formData) {
   }
 }
 
+// ─── DASHBOARD ───────────────────────────────────────
+
+export async function getDashboardStats() {
+  try {
+    const response = await api.get('/dashboard-stats');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    return {
+      total_scans: 0,
+      threats_detected: 0,
+      safe_verified: 0
+    };
+  }
+}
+
+export async function getThreatDistribution() {
+  try {
+    const response = await api.get('/threat-distribution');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching threat distribution:', error);
+    return {
+      safe: 0,
+      dangerous: 0
+    };
+  }
+}
+
+export async function getRecentActivity() {
+  try {
+    const response = await api.get('/dashboard/recent-activity');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching recent activity:', error);
+    return [];
+  }
+}
+
 export default api;

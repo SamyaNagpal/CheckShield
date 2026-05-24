@@ -18,7 +18,9 @@ export default function EmailScanner() {
       setResult({
         riskLevel: data.risk_level,
         riskScore: data.email_risk_score || data.risk_score,
-        reasons: data.reasons
+        reasons: data.reasons,
+        urlsAnalyzed: data.urls_analyzed || [],
+        hasVirusTotal: data.urls_analyzed?.some(url => url.blacklist_flag) || false
       });
     } catch (err) {
       setError(err.message);
@@ -167,6 +169,72 @@ export default function EmailScanner() {
               </div>
             )}
           </div>
+
+          {result.hasVirusTotal && (
+            <div style={{ 
+              marginBottom: '30px', 
+              padding: '18px 20px', 
+              background: 'rgba(239, 68, 68, 0.15)',
+              borderRadius: '12px',
+              border: '2px solid #ef4444',
+              display: 'flex',
+              gap: '14px',
+              alignItems: 'start'
+            }}>
+              <div style={{ fontSize: '28px', flexShrink: 0 }}>🚨</div>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#ef4444', marginBottom: '4px' }}>
+                  MALICIOUS URLS DETECTED
+                </div>
+                <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: '1.5' }}>
+                  This email contains one or more URLs that have been flagged as malicious by VirusTotal. Do not click these links.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {result.urlsAnalyzed && result.urlsAnalyzed.length > 0 && (
+            <div style={{ 
+              marginBottom: '30px', 
+              padding: '20px', 
+              background: 'var(--secondary-bg)',
+              borderRadius: '8px',
+              border: '1px solid var(--border-color)'
+            }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '14px' }}>
+                🔗 Detected URLs in Email
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {result.urlsAnalyzed.map((urlData, idx) => (
+                  <div key={idx} style={{ 
+                    padding: '14px 16px', 
+                    background: 'var(--primary-bg)',
+                    border: `1px solid ${urlData.blacklist_flag ? '#ef4444' : 'var(--border-color)'}`,
+                    borderRadius: '8px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
+                        URL #{idx + 1}
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--text-primary)', wordBreak: 'break-all', fontFamily: 'monospace', marginBottom: '6px' }}>
+                        {urlData.url}
+                      </div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                        Risk: <strong style={{ color: urlData.risk_score >= 70 ? '#ef4444' : urlData.risk_score >= 40 ? '#f59e0b' : '#22c55e' }}>
+                          {urlData.risk_score}% - {urlData.risk_level}
+                        </strong>
+                        {urlData.blacklist_flag && <span style={{ marginLeft: '8px', color: '#ef4444', fontWeight: 700 }}>⚠️ FLAGGED BY VIRUSTOTAL</span>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div style={{ 
             marginBottom: '30px', 

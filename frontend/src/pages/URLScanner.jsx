@@ -135,7 +135,7 @@ export default function URLScanner() {
             </div>
           </div>
 
-          {result.blacklistFlag && (
+          {result.blacklistFlag ? (
             <div style={{ 
               marginBottom: '30px', 
               padding: '18px 20px', 
@@ -156,7 +156,29 @@ export default function URLScanner() {
                 </div>
               </div>
             </div>
+          ) : (
+            <div style={{ 
+              marginBottom: '30px', 
+              padding: '18px 20px', 
+              background: 'rgba(34, 197, 94, 0.15)',
+              borderRadius: '12px',
+              border: '2px solid #22c55e',
+              display: 'flex',
+              gap: '14px',
+              alignItems: 'start'
+            }}>
+              <div style={{ fontSize: '28px', flexShrink: 0 }}>✅</div>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#22c55e', marginBottom: '4px' }}>
+                  VIRUSTOTAL VERIFIED SAFE
+                </div>
+                <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: '1.5' }}>
+                  This URL has been checked against VirusTotal's threat intelligence database and is not detected as malicious.
+                </div>
+              </div>
+            </div>
           )}
+
 
           <div style={{ 
             marginBottom: '30px', 
