@@ -151,14 +151,13 @@ async function scanUrl(url) {
 function displayResults(data, url) {
     const riskLevel = data.risk_level || 'unknown';
     const riskScore = data.risk_score || 0;
-    const riskClass = riskLevel.toLowerCase();
+    const riskClass = getRiskClass(riskLevel);
     
-    // Format risk score as percentage (risk_score is already in decimal form like 0.0028)
-    const riskPercentage = (riskScore * 100).toFixed(2);
+    const riskPercentage = Number(riskScore).toFixed(2);
 
     let html = `<div class="result-card ${riskClass}-risk">`;
     html += `<div class="result-header">`;
-    html += `<span class="risk-level risk-${riskClass}">${riskLevel.toUpperCase()}</span>`;
+    html += `<span class="risk-level risk-${riskClass}">${escapeHtml(riskLevel.toUpperCase())}</span>`;
     html += `<span class="risk-score">${riskPercentage}%</span>`;
     html += `</div>`;
     html += `<div class="result-url">${escapeHtml(url)}</div>`;
@@ -218,7 +217,7 @@ function loadHistory() {
         }
 
         history.forEach((item) => {
-            const riskClass = (item.risk_level || 'unknown').toLowerCase();
+            const riskClass = getRiskClass(item.risk_level || 'unknown');
             const historyItem = document.createElement('div');
             historyItem.className = 'history-item';
             historyItem.innerHTML = `
@@ -284,6 +283,14 @@ function escapeHtml(text) {
         "'": '&#039;'
     };
     return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
+function getRiskClass(level) {
+    const normalized = String(level || '').toLowerCase();
+    if (normalized.includes('critical') || normalized.includes('high')) return 'high';
+    if (normalized.includes('medium')) return 'medium';
+    if (normalized.includes('low') || normalized.includes('safe')) return 'low';
+    return 'unknown';
 }
 
 function showLoading(visible) {

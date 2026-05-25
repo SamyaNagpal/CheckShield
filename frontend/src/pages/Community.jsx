@@ -317,11 +317,21 @@ function Community({ user }) {
     { value: 'other', label: 'Other' }
   ];
 
+  const highRiskCount = posts.filter(post => post.severity === 'high').length;
+  const totalResponses = posts.reduce((sum, post) => sum + (post.replies?.length || 0), 0);
+
   return (
     <div className="community-container">
       <div className="community-header">
-        <h1>Community Security Feed</h1>
-        <p>Share and stay informed about scams and threats</p>
+        <div>
+          <h1>Community Security Feed</h1>
+          <p>Real scam reports from users, with replies and helpful context from the community.</p>
+        </div>
+        <div className="community-summary">
+          <span>{posts.length} reports</span>
+          <span>{highRiskCount} high risk</span>
+          <span>{totalResponses} responses</span>
+        </div>
       </div>
 
       <div className="community-controls">
@@ -329,7 +339,7 @@ function Community({ user }) {
           className="btn-create-post"
           onClick={() => setShowCreateForm(!showCreateForm)}
         >
-          {showCreateForm ? 'Cancel' : '+ Create Post'}
+          {showCreateForm ? 'Close Report Form' : 'Report a Scam'}
         </button>
 
         <div className="category-filters">
@@ -358,7 +368,7 @@ function Community({ user }) {
                   onClick={() => handleImproveText('title')}
                   disabled={isImproving}
                 >
-                  {isImproving && improvingField === 'title' ? '✨ Improving...' : '✨ Improve with AI'}
+                  {isImproving && improvingField === 'title' ? 'Improving...' : 'Improve with AI'}
                 </button>
               </div>
               <input
@@ -410,7 +420,7 @@ function Community({ user }) {
                   onClick={() => handleImproveText('description')}
                   disabled={isImproving}
                 >
-                  {isImproving && improvingField === 'description' ? '✨ Improving...' : '✨ Improve with AI'}
+                  {isImproving && improvingField === 'description' ? 'Improving...' : 'Improve with AI'}
                 </button>
               </div>
               <textarea
@@ -466,14 +476,14 @@ function Community({ user }) {
                   }`}
                   onClick={() => handleUpvote(post._id)}
                 >
-                  👍 {post.upvotes}
+Helpful {post.upvotes}
                 </button>
 
                 <button 
                   className="action-btn comment-btn"
                   onClick={() => setExpandedPostId(expandedPostId === post._id ? null : post._id)}
                 >
-                  💬 {post.replies?.length || 0}
+Responses {post.replies?.length || 0}
                 </button>
 
                 {post.author.id === user.id && (
@@ -481,7 +491,7 @@ function Community({ user }) {
                     className="action-btn delete-btn"
                     onClick={() => handleDeletePost(post._id)}
                   >
-                    🗑️ Delete
+                    Delete
                   </button>
                 )}
               </div>
@@ -534,12 +544,12 @@ function Community({ user }) {
         <div className="modal-overlay">
           <div className="improvement-modal">
             <div className="modal-header">
-              <h3>✨ AI Improvement Suggestion</h3>
+              <h3>AI Improvement Suggestion</h3>
               <button 
                 className="close-btn"
                 onClick={handleRejectImprovement}
               >
-                ✕
+                X
               </button>
             </div>
 
@@ -561,13 +571,13 @@ function Community({ user }) {
                   className="btn-accept"
                   onClick={handleAcceptImprovement}
                 >
-                  ✓ Accept & Update
+                  Accept & Update
                 </button>
                 <button 
                   className="btn-reject"
                   onClick={handleRejectImprovement}
                 >
-                  ✕ Reject
+                  Reject
                 </button>
               </div>
             </div>
@@ -579,3 +589,4 @@ function Community({ user }) {
 }
 
 export default Community;
+

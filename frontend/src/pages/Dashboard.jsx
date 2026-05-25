@@ -77,23 +77,29 @@ export default function Dashboard() {
   );
 
   return (
-    <div>
-      <h1 className="page-title">Your Security Dashboard</h1>
-      <p className="page-subtitle">
-        Monitor your scanning activity and security metrics
-      </p>
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+        <div>
+          <h1 className="page-title">Security Dashboard</h1>
+          <p className="page-subtitle">
+            A quick view of scanner activity, detected threats, and recent checks.
+          </p>
+        </div>
+        <div className="dashboard-status">
+          <span className="status-dot"></span>
+          Live overview
+        </div>
+      </div>
 
       {/* Stats Grid */}
-      <div
-        className="grid grid-4"
-        style={{ marginBottom: '30px' }}
-      >
-        <div className="stat-card">
+      <div className="dashboard-stats">
+        <div className="stat-card dashboard-stat-card">
           <div className="stat-label">Total Scans</div>
           <div className="stat-value">{stats.totalScans}</div>
+          <div className="stat-helper">Across URL, email, UPI and QR checks</div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card dashboard-stat-card">
           <div className="stat-label">Threats Detected</div>
           <div
             className="stat-value"
@@ -101,193 +107,143 @@ export default function Dashboard() {
           >
             {stats.threatsDetected}
           </div>
+          <div className="stat-helper">High and medium risk results</div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-label">Safe URLs</div>
+        <div className="stat-card dashboard-stat-card">
+          <div className="stat-label">Safe Results</div>
           <div
             className="stat-value"
             style={{ color: 'var(--accent-green)' }}
           >
             {stats.safeUrls}
           </div>
+          <div className="stat-helper">Checks marked low risk</div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card dashboard-stat-card">
           <div className="stat-label">Security Score</div>
           <div className="stat-value">
             {stats.securityScore}%
           </div>
+          <div className="stat-helper">Safe checks as a share of total scans</div>
         </div>
       </div>
 
       {/* Threat Distribution */}
-      <div className="card">
-        <div className="card-title">Threat Distribution</div>
-
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '30px'
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              width: '150px',
-              height: '150px'
-            }}
-          >
-            <svg
-              viewBox="0 0 100 100"
-              style={{
-                transform: 'rotate(-90deg)',
-                width: '100%',
-                height: '100%'
-              }}
-            >
-              <circle
-                cx="50"
-                cy="50"
-                r="45"
-                fill="none"
-                stroke="#16a34a"
-                strokeWidth="12"
-                strokeDasharray={`${
-                  (threatData[0].value / totalThreats) * 283
-                } 283`}
-              />
-
-              <circle
-                cx="50"
-                cy="50"
-                r="45"
-                fill="none"
-                stroke="#dc2626"
-                strokeWidth="12"
-                strokeDasharray={`${
-                  (threatData[1].value / totalThreats) * 283
-                } 283`}
-                strokeDashoffset={`-${
-                  (threatData[0].value / totalThreats) * 283
-                }`}
-              />
-            </svg>
-
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                textAlign: 'center'
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 700
-                }}
-              >
-                {safePercentage}%
-              </div>
-
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: 'var(--text-secondary)'
-                }}
-              >
-                Safe
-              </div>
+      <div className="dashboard-grid">
+        <div className="card dashboard-panel">
+          <div className="dashboard-panel-header">
+            <div>
+              <div className="card-title">Threat Distribution</div>
+              <p>Breakdown of safe versus risky scans.</p>
             </div>
           </div>
 
-          <div>
-            <div style={{ marginBottom: '15px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <div
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    background: '#16a34a'
-                  }}
+          <div className="distribution-content">
+            <div className="distribution-chart">
+              <svg viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#e2e8f0"
+                  strokeWidth="12"
                 />
-
-                <span>
-                  Safe: {threatData[0].value}
-                </span>
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#16a34a"
+                  strokeWidth="12"
+                  strokeLinecap="round"
+                  strokeDasharray={`${
+                    (threatData[0].value / totalThreats) * 264
+                  } 264`}
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#dc2626"
+                  strokeWidth="12"
+                  strokeLinecap="round"
+                  strokeDasharray={`${
+                    (threatData[1].value / totalThreats) * 264
+                  } 264`}
+                  strokeDashoffset={`-${
+                    (threatData[0].value / totalThreats) * 264
+                  }`}
+                />
+              </svg>
+              <div className="distribution-center">
+                <strong>{safePercentage}%</strong>
+                <span>Safe</span>
               </div>
             </div>
 
-            <div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <div
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    background: '#dc2626'
-                  }}
-                />
-
-                <span>
-                  Dangerous: {threatData[1].value}
-                </span>
+            <div className="distribution-list">
+              <div className="distribution-row">
+                <span className="legend-dot safe"></span>
+                <span>Safe</span>
+                <strong>{threatData[0].value}</strong>
               </div>
+              <div className="distribution-row">
+                <span className="legend-dot dangerous"></span>
+                <span>Risky</span>
+                <strong>{threatData[1].value}</strong>
+              </div>
+              {stats.totalScans === 0 && (
+                <div className="dashboard-empty-note">
+                  Run a scan to populate this chart.
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Recent Activity */}
-      <div
-        className="card"
-        style={{ marginTop: '30px' }}
-      >
-        <div className="card-title">Recent Activity</div>
+        {/* Recent Activity */}
+        <div className="card dashboard-panel">
+          <div className="dashboard-panel-header">
+            <div>
+              <div className="card-title">Recent Activity</div>
+              <p>Latest scanner events shown for dashboard context.</p>
+            </div>
+          </div>
 
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {recentActivity.map((activity, idx) => (
-              <tr key={idx}>
-                <td>{activity.type}</td>
-
-                <td>
-                  <span
-                    className={`badge ${getStatusBadgeClass(
-                      activity.status
-                    )}`}
-                  >
-                    {activity.status}
-                  </span>
-                </td>
-
-                <td>{activity.time}</td>
+          <table className="table dashboard-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Time</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {recentActivity.map((activity, idx) => (
+                <tr key={idx}>
+                  <td>{activity.type}</td>
+
+                  <td>
+                    <span
+                      className={`badge ${getStatusBadgeClass(
+                        activity.status
+                      )}`}
+                    >
+                      {activity.status}
+                    </span>
+                  </td>
+
+                  <td>{activity.time}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

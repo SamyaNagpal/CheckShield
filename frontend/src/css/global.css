@@ -787,6 +787,225 @@ a:hover {
   color: var(--text-primary);
 }
 
+/* Dashboard */
+.dashboard-page {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-page .page-title {
+  margin-bottom: 8px;
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.dashboard-page .page-subtitle {
+  max-width: 620px;
+  margin-bottom: 0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.dashboard-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #dbe3ef;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #16a34a;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.dashboard-stat-card {
+  min-height: 150px;
+  padding: 22px;
+  text-align: left;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-stat-card .stat-label {
+  margin-bottom: 20px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.dashboard-stat-card .stat-value {
+  color: #2563eb;
+  font-size: 42px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.stat-helper {
+  margin-top: 14px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.dashboard-panel {
+  min-height: 310px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.05);
+}
+
+.dashboard-panel-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.dashboard-panel-header .card-title {
+  margin-bottom: 6px;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.dashboard-panel-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.distribution-content {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.distribution-chart {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  flex: 0 0 auto;
+}
+
+.distribution-chart svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.distribution-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.distribution-center strong {
+  color: #0f172a;
+  font-size: 28px;
+  font-weight: 650;
+}
+
+.distribution-center span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.distribution-list {
+  flex: 1;
+  min-width: 180px;
+}
+
+.distribution-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 14px;
+}
+
+.distribution-row strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.legend-dot.safe {
+  background: #16a34a;
+}
+
+.legend-dot.dangerous {
+  background: #dc2626;
+}
+
+.dashboard-empty-note {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  background: #f8fafc;
+  font-size: 13px;
+}
+
+.dashboard-table th {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.dashboard-table td {
+  color: #334155;
+  font-size: 14px;
+}
+
 @media (max-width: 768px) {
   .landing-hero-title {
     font-size: 32px;
@@ -810,6 +1029,21 @@ a:hover {
 
   .page-content {
     padding: 20px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-stats,
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .distribution-content {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .grid-4 {
