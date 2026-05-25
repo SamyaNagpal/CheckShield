@@ -3,9 +3,6 @@ export default function Sidebar({ currentPage, onNavigate }) {
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'url-scanner', label: 'URL Scanner', icon: '🔗' },
     { id: 'email-scanner', label: 'Email Scanner', icon: '✉️' },
-    { id: 'upi-protection', label: 'UPI Protection', icon: '💳' },
-    { id: 'qr-scanner', label: 'QR Scanner', icon: '📱' },
-    { id: 'analytics', label: 'Analytics', icon: '📈' },
     { id: 'scan-history', label: 'Scan History', icon: '⏱️' },
     { id: 'settings', label: 'Settings', icon: '⚙️' }
   ];

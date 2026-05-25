@@ -29,6 +29,11 @@ export default function EmailScanner() {
     }
   };
 
+  const getRiskColorByScore = (score) => {
+    if (score >= 50) return '#ef4444'; // Red for high risk
+    return '#22c55e'; // Green for safe
+  };
+
   const getRiskColor = (level) => {
     if (level === 'Critical') return '#ef4444';
     if (level === 'High') return '#f59e0b';
@@ -41,10 +46,20 @@ export default function EmailScanner() {
     return 25;
   };
 
+  const getBgColorByScore = (score) => {
+    if (score >= 50) return 'rgba(239, 68, 68, 0.1)'; // Red background for high risk
+    return 'rgba(34, 197, 94, 0.1)'; // Green background for safe
+  };
+
   const getBgColor = (level) => {
     if (level === 'Critical') return 'rgba(239, 68, 68, 0.1)';
     if (level === 'High') return 'rgba(245, 158, 11, 0.1)';
     return 'rgba(34, 197, 94, 0.1)';
+  };
+
+  const getRiskBadgeClassByScore = (score) => {
+    if (score >= 50) return 'badge-high'; // Red badge for high risk
+    return 'badge-safe'; // Green badge for safe
   };
 
   const getRiskBadgeClass = (level) => {
@@ -118,30 +133,29 @@ export default function EmailScanner() {
               </div>
               <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Email Analysis Report</div>
             </div>
-            <span className={`badge ${getRiskBadgeClass(result.riskLevel)}`} style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
+            <span className={`badge ${getRiskBadgeClassByScore(result.riskScore)}`} style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}>
               {result.riskLevel.toUpperCase()}
             </span>
           </div>
 
           <div style={{ 
             padding: '24px', 
-            background: getBgColor(result.riskLevel), 
+            background: getBgColorByScore(result.riskScore), 
             borderRadius: '12px',
             marginBottom: '30px',
-            border: `2px solid ${getRiskColor(result.riskLevel)}20`
+            border: `2px solid ${getRiskColorByScore(result.riskScore)}20`
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ fontSize: '40px' }}>
-                {result.riskLevel === 'Critical' && '🚨'}
-                {result.riskLevel === 'High' && '⚠️'}
-                {result.riskLevel !== 'Critical' && result.riskLevel !== 'High' && '✅'}
+                {result.riskScore >= 50 && '🚨'}
+                {result.riskScore < 50 && '✅'}
               </div>
               <div>
                 <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Risk Level
                 </div>
-                <div style={{ fontSize: '28px', fontWeight: 800, color: getRiskColor(result.riskLevel), marginTop: '4px' }}>
-                  {result.riskLevel}
+                <div style={{ fontSize: '28px', fontWeight: 800, color: getRiskColorByScore(result.riskScore), marginTop: '4px' }}>
+                  {result.riskScore >= 50 ? 'HIGH RISK' : 'SAFE'}
                 </div>
               </div>
             </div>
@@ -151,7 +165,7 @@ export default function EmailScanner() {
                   <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Risk Score
                   </div>
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: getRiskColor(result.riskLevel) }}>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: getRiskColorByScore(result.riskScore) }}>
                     {result.riskScore}%
                   </span>
                 </div>
@@ -159,7 +173,7 @@ export default function EmailScanner() {
                   <div 
                     style={{ 
                       width: `${result.riskScore}%`,
-                      backgroundColor: getRiskColor(result.riskLevel),
+                      backgroundColor: getRiskColorByScore(result.riskScore),
                       borderRadius: '3px',
                       height: '100%',
                       transition: 'width 0.3s ease'

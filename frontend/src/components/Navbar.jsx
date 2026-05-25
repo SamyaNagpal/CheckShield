@@ -4,9 +4,7 @@ export default function Navbar({ user, onLogout, currentPage, onNavigate }) {
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'url-scanner', label: 'URL Scanner' },
     { id: 'email-scanner', label: 'Email Scanner' },
-    { id: 'qr-scanner', label: 'QR Scanner' },
-    { id: 'upi-protection', label: 'UPI Protection' },
-    { id: 'analytics', label: 'Analytics' }
+    { id: 'qr-scanner', label: 'QR Scanner' }
   ];
 
   return (
@@ -16,7 +14,7 @@ export default function Navbar({ user, onLogout, currentPage, onNavigate }) {
         <span>CheckShield</span>
       </div>
       
-      <div className="navbar-menu">
+      <div className="navbar-menu" style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '30px' }}>
         {navItems.map(item => (
           <a 
             key={item.id}
@@ -47,4 +45,3 @@ export default function Navbar({ user, onLogout, currentPage, onNavigate }) {
     </div>
   );
 }
-
